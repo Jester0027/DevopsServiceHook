@@ -1,4 +1,10 @@
+using System.Reflection;
+using System.Text.Json.Serialization;
+using Ardalis.SmartEnum.SystemTextJson;
+using DevopsServiceHook._Setup.Services;
+using DevopsServiceHook.AzureDevopsMessage.Enums;
 using DevopsServiceHook.Swagger;
+using MediatR;
 
 namespace DevopsServiceHook;
 
@@ -10,10 +16,15 @@ internal static class Program
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(options =>
+        builder.Services.AddSwaggerGen(options => { options.SchemaFilter<SmartEnumSchemaFilter>(); });
+        builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+        builder.Services.AddControllers().AddJsonOptions(options =>
         {
-            options.SchemaFilter<SmartEnumSchemaFilter>();
+            options.JsonSerializerOptions.Converters.Add(new SmartEnumValueConverter<EventType, string>());
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
+
+        builder.Services.AddHangfire(builder.Configuration);
 
         var app = builder.Build();
 

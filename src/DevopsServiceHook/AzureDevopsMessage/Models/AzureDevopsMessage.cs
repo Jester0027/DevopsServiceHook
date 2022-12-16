@@ -1,4 +1,6 @@
-﻿using DevopsServiceHook.AzureDevopsMessage.Enums;
+﻿using System.Text.Json.Serialization;
+using DevopsServiceHook.AzureDevopsMessage.Enums;
+using DevopsServiceHook.Commands;
 
 namespace DevopsServiceHook.AzureDevopsMessage.Models;
 
@@ -9,12 +11,25 @@ namespace DevopsServiceHook.AzureDevopsMessage.Models;
 public sealed record AzureDevopsMessage
 {
     public Guid Id { get; set; }
-    public EventType EventType { get; set; }
+    public EventType EventType { get; set; } = null!;
     public Guid PublisherId { get; set; }
-    public string Scope { get; set; }
-    public DetailedMessage DetailedMessage { get; set; }
-    public PullRequestResource.PullRequestResource Resource { get; set; }
-    public string ResourceVersion { get; set; }
-    public ResourceContainers ResourceContainers { get; set; }
+    public string Scope { get; set; } = null!;
+    public DetailedMessage DetailedMessage { get; set; } = null!;
+    public PullRequestResource.PullRequestResource Resource { get; set; } = null!;
+    public string ResourceVersion { get; set; } = null!;
+    public ResourceContainers ResourceContainers { get; set; } = null!;
     public DateTime CreatedDate { get; set; }
+
+    public AzureDevopsMessage()
+    {
+    }
+
+    public DevopsCommand ToCommand()
+    {
+        return EventType.Name switch
+        {
+            nameof(EventType.PullRequestCreated) => new PullRequestCreatedCommand(this),
+            _ => throw new NotImplementedException()
+        };
+    }
 }

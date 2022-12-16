@@ -1,8 +1,11 @@
-﻿using Ardalis.SmartEnum;
+﻿using System.Diagnostics;
+using Ardalis.SmartEnum;
+using DevopsServiceHook.Commands;
+using MediatR;
 
 namespace DevopsServiceHook.AzureDevopsMessage.Enums;
 
-public class EventType : SmartEnum<EventType, string>
+public sealed class EventType : SmartEnum<EventType, string>
 {
     public static readonly EventType BuildComplete = new(nameof(BuildComplete), "build.complete");
     public static readonly EventType ReleaseAbandoned = new(nameof(ReleaseAbandoned), "ms.vss-release.release-abandoned-event");
@@ -24,7 +27,7 @@ public class EventType : SmartEnum<EventType, string>
     public static readonly EventType WorkItemRestored = new(nameof(WorkItemRestored), "workitem.restored");
     public static readonly EventType WorkItemUpdated = new(nameof(WorkItemUpdated), "workitem.updated");
     public static readonly EventType WorkItemCommented = new(nameof(WorkItemCommented), "workitem.commented");
-    
+
     public EventType(string name, string value) : base(name, value)
     {
     }
